@@ -1,0 +1,842 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Child Diabetes Care & Support</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<style>
+		:root {
+			--primary: #ff8a80;
+			--primary-dark: #e57373;
+			--accent: #ffd54f;
+			--bg: #fff8f6;
+			--text-dark: #333;
+			--text-muted: #666;
+			--card-bg: #ffffff;
+			--border-radius: 14px;
+			--shadow-soft: 0 10px 25px rgba(0,0,0,0.06);
+		}
+		* {
+			box-sizing: border-box;
+			margin: 0;
+			padding: 0;
+			font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+		}
+		body {
+			background: linear-gradient(180deg, #fff8f6, #ffe7df);
+			color: var(--text-dark);
+			line-height: 1.6;
+		}
+
+		/* ===== SPLASH SCREEN ===== */
+		#splash-screen {
+			position: fixed;
+			inset: 0;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			background: linear-gradient(135deg, #ffccb3, #ff8a80);
+			color: white;
+			z-index: 9999;
+			flex-direction: column;
+			text-align: center;
+		}
+		#splash-title {
+			font-size: clamp(2.2rem, 4vw, 3rem);
+			font-weight: 800;
+			margin-bottom: 0.5rem;
+		}
+		#splash-subtitle {
+			font-size: 0.95rem;
+			opacity: 0.9;
+		}
+		/* small loading dot animation */
+		#splash-dots {
+			margin-top: 1rem;
+			font-size: 1.4rem;
+			animation: blink 1s infinite steps(1, start);
+		}
+		@keyframes blink {
+			0% { opacity: 0.2; }
+			50% { opacity: 1; }
+			100% { opacity: 0.2; }
+		}
+
+		/* Hide main content until splash is done */
+		#main-wrapper {
+			display: none;
+		}
+
+		header {
+			background: linear-gradient(135deg, #ffccb3, #ff8a80);
+			color: white;
+			padding: 1.5rem 1.5rem;
+			box-shadow: var(--shadow-soft);
+			position: sticky;
+			top: 0;
+			z-index: 10;
+		}
+		.nav-container {
+			max-width: 1100px;
+			margin: 0 auto;
+			display: flex;
+			align-items: center;
+			justify-content: space-between;
+		}
+		.logo {
+			font-weight: 800;
+			font-size: 1.2rem;
+			display: flex;
+			align-items: center;
+			gap: 0.5rem;
+		}
+		.logo span {
+			font-size: 1.4rem;
+		}
+		nav a {
+			color: #fff;
+			text-decoration: none;
+			margin-left: 1rem;
+			font-size: 0.95rem;
+			font-weight: 500;
+			position: relative;
+		}
+		nav a::after {
+			content: "";
+			position: absolute;
+			left: 0;
+			bottom: -4px;
+			width: 0;
+			height: 2px;
+			background: #ffe082;
+			transition: width 0.2s ease;
+		}
+		nav a:hover::after {
+			width: 100%;
+		}
+		main {
+			max-width: 1100px;
+			margin: 1.5rem auto 3rem;
+			padding: 0 1.2rem;
+		}
+		section {
+			margin-bottom: 3rem;
+		}
+		h1, h2, h3 {
+			font-weight: 800;
+			color: var(--text-dark);
+		}
+		h2 {
+			margin-bottom: 0.8rem;
+		}
+		.section-intro {
+			color: var(--text-muted);
+			margin-bottom: 1.2rem;
+		}
+
+		/* Hero Section */
+		.hero {
+			display: grid;
+			grid-template-columns: minmax(0, 3fr) minmax(0, 2.5fr);
+			gap: 2rem;
+			align-items: center;
+			background: rgba(255,255,255,0.9);
+			padding: 2rem;
+			border-radius: 22px;
+			box-shadow: var(--shadow-soft);
+		}
+		.hero-badge {
+			display: inline-flex;
+			align-items: center;
+			gap: 0.4rem;
+			background: rgba(255,255,255,0.9);
+			color: #d84315;
+			padding: 0.3rem 0.7rem;
+			border-radius: 999px;
+			font-size: 0.8rem;
+			font-weight: 600;
+			margin-bottom: 0.8rem;
+		}
+		.hero h1 {
+			font-size: clamp(2.1rem, 3vw, 2.8rem);
+			margin-bottom: 0.8rem;
+		}
+		.hero p {
+			color: var(--text-muted);
+			margin-bottom: 1.5rem;
+		}
+		.hero-actions {
+			display: flex;
+			flex-wrap: wrap;
+			gap: 0.8rem;
+			align-items: center;
+		}
+		.btn-primary, .btn-outline {
+			border-radius: 999px;
+			padding: 0.6rem 1.4rem;
+			font-size: 0.95rem;
+			font-weight: 600;
+			border: none;
+			cursor: pointer;
+			display: inline-flex;
+			align-items: center;
+			justify-content: center;
+			gap: 0.4rem;
+			text-decoration: none;
+		}
+		.btn-primary {
+			background: #ff8a80;
+			color: white;
+			box-shadow: 0 8px 18px rgba(255, 138, 128, 0.4);
+		}
+		.btn-primary:hover {
+			background: #ff6f61;
+		}
+		.btn-outline {
+			background: transparent;
+			color: #ff6f61;
+			border: 1px solid #ffab91;
+		}
+		.hero-meta {
+			display: flex;
+			gap: 0.8rem;
+			margin-top: 1rem;
+			flex-wrap: wrap;
+		}
+		.hero-meta span {
+			font-size: 0.8rem;
+			color: var(--text-muted);
+			background: rgba(255, 255, 255, 0.8);
+			padding: 0.3rem 0.7rem;
+			border-radius: 999px;
+		}
+		.hero-illustration {
+			background: radial-gradient(circle at top left, #ffe0b2, #ff8a80);
+			border-radius: 22px;
+			padding: 1.5rem;
+			color: white;
+			box-shadow: var(--shadow-soft);
+			position: relative;
+			overflow: hidden;
+		}
+		.hero-illustration h3 {
+			color: #fff;
+		}
+		.hero-quote {
+			font-style: italic;
+			margin: 0.8rem 0 1.4rem;
+		}
+		.hero-stats {
+			display: grid;
+			grid-template-columns: repeat(2, minmax(0, 1fr));
+			gap: 0.9rem;
+		}
+		.hero-stat {
+			background: rgba(255,255,255,0.15);
+			padding: 0.7rem 0.9rem;
+			border-radius: 14px;
+			font-size: 0.8rem;
+		}
+		.hero-stat strong {
+			font-size: 1rem;
+			display: block;
+		}
+		.hero-heart {
+			position: absolute;
+			right: -25px;
+			bottom: -10px;
+			font-size: 7rem;
+			opacity: 0.09;
+		}
+
+		/* Cards & layout */
+		.grid-2 {
+			display: grid;
+			grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+			gap: 1.5rem;
+		}
+		.card {
+			background: var(--card-bg);
+			padding: 1.4rem 1.3rem;
+			border-radius: var(--border-radius);
+			box-shadow: var(--shadow-soft);
+		}
+		.card-header {
+			display: flex;
+			align-items: center;
+			gap: 0.6rem;
+			margin-bottom: 0.6rem;
+		}
+		.card-icon {
+			width: 32px;
+			height: 32px;
+			border-radius: 50%;
+			background: #ffe0b2;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			font-size: 1.1rem;
+		}
+		.card ul {
+			padding-left: 1.1rem;
+			margin-top: 0.4rem;
+		}
+		.card ul li {
+			margin-bottom: 0.25rem;
+			color: var(--text-muted);
+			font-size: 0.93rem;
+		}
+		.tag {
+			display: inline-block;
+			font-size: 0.78rem;
+			padding: 0.2rem 0.55rem;
+			border-radius: 999px;
+			background: #fff3e0;
+			color: #f57c00;
+			margin-bottom: 0.4rem;
+		}
+
+		/* Forms */
+		form {
+			display: grid;
+			gap: 0.8rem;
+		}
+		label {
+			font-size: 0.85rem;
+			font-weight: 600;
+			color: var(--text-dark);
+		}
+		input, textarea, select {
+			width: 100%;
+			padding: 0.55rem 0.7rem;
+			border-radius: 10px;
+			border: 1px solid #ffccbc;
+			font-size: 0.9rem;
+			outline: none;
+			background: #fffaf6;
+		}
+		input:focus, textarea:focus, select:focus {
+			border-color: var(--primary);
+			box-shadow: 0 0 0 2px rgba(255, 138, 128, 0.25);
+		}
+		textarea {
+			min-height: 100px;
+			resize: vertical;
+		}
+		.form-row-2 {
+			display: grid;
+			grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+			gap: 0.8rem;
+		}
+		.helper-text {
+			font-size: 0.8rem;
+			color: var(--text-muted);
+		}
+
+		/* Moral support / quotes */
+		.quote-card {
+			border-left: 5px solid #ffab91;
+			padding-left: 1rem;
+		}
+		.quote-card p {
+			font-style: italic;
+		}
+		.quote-author {
+			font-size: 0.85rem;
+			color: var(--text-muted);
+			margin-top: 0.4rem;
+		}
+		.support-list {
+			display: grid;
+			grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+			gap: 1rem;
+			margin-top: 1rem;
+		}
+		.support-item {
+			font-size: 0.9rem;
+			color: var(--text-muted);
+		}
+
+		/* Comments & experiences */
+		.comment-list {
+			margin-top: 1rem;
+		}
+		.comment {
+			background: #fff3e0;
+			border-radius: 12px;
+			padding: 0.8rem 0.9rem;
+			margin-bottom: 0.7rem;
+			font-size: 0.9rem;
+		}
+		.comment-header {
+			display: flex;
+			align-items: center;
+			justify-content: space-between;
+			font-size: 0.8rem;
+			color: #d84315;
+			margin-bottom: 0.3rem;
+		}
+		.comment-role {
+			font-size: 0.75rem;
+			color: var(--text-muted);
+		}
+
+		/* Footer */
+		footer {
+			background: #ffccbc;
+			color: #4e342e;
+			padding: 1.2rem 1.5rem;
+			text-align: center;
+			font-size: 0.85rem;
+		}
+		footer a {
+			color: #4e342e;
+			font-weight: 600;
+			text-decoration: underline;
+		}
+
+		/* Responsive */
+		@media (max-width: 768px) {
+			header {
+				padding: 1rem 1rem;
+			}
+			nav {
+				display: none;
+			}
+			.hero {
+				grid-template-columns: 1fr;
+			}
+			.hero-illustration {
+				order: -1;
+			}
+		}
+	</style>
+</head>
+<body>
+
+	<!-- SPLASH SCREEN (shown for 4 seconds) -->
+	<div id="splash-screen">
+		<div id="splash-title">Child Diabetes Care &amp; Support</div>
+		<div id="splash-subtitle">With care, courage, and kindness — every single day.</div>
+		<div id="splash-dots">...</div>
+	</div>
+
+	<!-- MAIN CONTENT WRAPPER (hidden until splash is done) -->
+	<div id="main-wrapper">
+		<header>
+			<div class="nav-container">
+				<div class="logo">
+					<span>🧸</span> Child Diabetes Care
+				</div>
+				<nav>
+					<a href="C:\Users\darap\OneDrive\Desktop\child diabetics\home.html"target="_blank">Home</a>
+					<a href="C:\Users\darap\OneDrive\Desktop\child diabetics\causes.html"target="_blank">Causes</a>
+					<a href="C:\Users\darap\OneDrive\Desktop\child diabetics\precautions.html"target="_blank">Precautions</a>
+					<a href="C:\Users\darap\OneDrive\Desktop\child diabetics\daily care.html"target="_blank">Daily Care</a>
+					<a href="C:\Users\darap\OneDrive\Desktop\child diabetics\medication.html"target="_blank">Medication</a>
+					<a href="C:\Users\darap\OneDrive\Desktop\child diabetics\moral support.html"target="_blank">Moral Support</a>
+				</nav>
+			</div>
+		</header>
+
+		<main>
+			<!-- HERO -->
+			<section id="hero" class="hero">
+				<div>
+					<div class="hero-badge">
+						<span>🌈</span> Hope, strength, and everyday victories
+					</div>
+					<h1>Supporting Children With Diabetes, One Brave Day at a Time</h1>
+					<p>
+						Childhood diabetes is only one part of your child’s story.
+						With the right knowledge, care, and emotional support, children can live active, joyful, and confident lives.
+					</p>
+					<div class="hero-actions">
+						<a href="#experience-form" class="btn-primary">
+							Share your journey
+						</a>
+						<a href="#precautions" class="btn-outline">
+							Learn daily precautions
+						</a>
+					</div>
+					<div class="hero-meta">
+						<span>👨‍👩‍👧 For parents, caregivers &amp; young warriors</span>
+						<span>📖 Simple, practical guidance</span>
+					</div>
+				</div>
+				<div class="hero-illustration">
+					<h3>“I am more than my numbers.”</h3>
+					<p class="hero-quote">
+						Every reading, every injection, every choice is an act of courage.
+						You and your child are not alone on this path.
+					</p>
+					<div class="hero-stats">
+						<div class="hero-stat">
+							<strong>Step-by-step care</strong>
+							Daily routines to build confidence.
+						</div>
+						<div class="hero-stat">
+							<strong>Gentle motivation</strong>
+							Words that comfort on the hard days.
+						</div>
+						<div class="hero-stat">
+							<strong>Real voices</strong>
+							Stories from other families and children.
+						</div>
+						<div class="hero-stat">
+							<strong>Safe space</strong>
+							Share fears, wins, and questions.
+						</div>
+					</div>
+					<div class="hero-heart">❤</div>
+				</div>
+			</section>
+
+			<!-- CAUSES -->
+			<section id="causes">
+				<h2>What Causes Diabetes in Children?</h2>
+				<p class="section-intro">
+					Understanding why diabetes happens can ease guilt and confusion.
+					Most of the time, it is not anyone’s fault. It is a medical condition, not a result of something you did or did not do.
+				</p>
+				<div class="grid-2">
+					<div class="card">
+						<div class="card-header">
+							<div class="card-icon">🧬</div>
+							<div>
+								<h3>Type 1 Diabetes</h3>
+								<span class="tag">Most common in children</span>
+							</div>
+						</div>
+						<ul>
+							<li>The immune system mistakenly attacks insulin-producing cells in the pancreas.</li>
+							<li>Insulin becomes very low or absent, so blood sugar rises.</li>
+							<li>Often linked to genetics and immune triggers, not diet or lifestyle.</li>
+							<li>Requires lifelong insulin therapy but children can live full lives.</li>
+						</ul>
+					</div>
+					<div class="card">
+						<div class="card-header">
+							<div class="card-icon">⚖️</div>
+							<div>
+								<h3>Type 2 &amp; Other Types</h3>
+								<span class="tag">Becoming more common in teens</span>
+							</div>
+						</div>
+						<ul>
+							<li>The body still makes insulin but cannot use it properly (insulin resistance).</li>
+							<li>Can be linked to family history, weight, and activity levels.</li>
+							<li>Sometimes managed with lifestyle changes, tablets, or insulin.</li>
+							<li>Gestational and genetic forms also exist and need specialist care.</li>
+						</ul>
+					</div>
+				</div>
+			</section>
+
+			<!-- PRECAUTIONS -->
+			<section id="precautions">
+				<h2>Daily Precautions to Keep Your Child Safe</h2>
+				<p class="section-intro">
+					Small, consistent steps each day can prevent emergencies and help your child feel secure and strong.
+				</p>
+				<div class="grid-2">
+					<div class="card">
+						<div class="card-header">
+							<div class="card-icon">🩺</div>
+							<h3>Blood Sugar &amp; Safety Checks</h3>
+						</div>
+						<ul>
+							<li>Monitor blood sugar as advised by your doctor (glucometer or sensor).</li>
+							<li>Keep a “hypo kit” (fast sugar + snack) in school bags and at home.</li>
+							<li>Teach your child simple signs of low sugar: shakiness, sweating, sudden tiredness, irritability.</li>
+							<li>Share an emergency plan with teachers, coaches, and relatives.</li>
+						</ul>
+					</div>
+					<div class="card">
+						<div class="card-header">
+							<div class="card-icon">🥗</div>
+							<h3>Food &amp; Activity Precautions</h3>
+						</div>
+						<ul>
+							<li>Try to keep meal and snack times as regular as possible.</li>
+							<li>Pair carbs with protein or healthy fat to avoid sudden spikes.</li>
+							<li>Adjust snacks/insulin for sports, dance, or playtime as advised.</li>
+							<li>Always carry water and a small snack when going out.</li>
+						</ul>
+					</div>
+				</div>
+			</section>
+
+			<!-- CARE -->
+			<section id="care">
+				<h2>Gentle, Practical Daily Care</h2>
+				<p class="section-intro">
+					Diabetes care is a team effort. Curious children, calm caregivers, and supportive professionals
+					together can turn routines into powerful habits.
+				</p>
+				<div class="grid-2">
+					<div class="card">
+						<div class="card-header">
+							<div class="card-icon">🧒</div>
+							<h3>For Children</h3>
+						</div>
+						<ul>
+							<li>Explain diabetes in simple, kind words: “Your body needs help using sugar.”</li>
+							<li>Let children help with small tasks: scanning sensors, choosing finger, picking band-aids.</li>
+							<li>Use reward charts for brave checks and injections.</li>
+							<li>Normalize it: “Many kids around the world do this too.”</li>
+						</ul>
+					</div>
+					<div class="card">
+						<div class="card-header">
+							<div class="card-icon">👨‍👩‍👧</div>
+							<h3>For Parents &amp; Caregivers</h3>
+						</div>
+						<ul>
+							<li>Keep a simple written routine: waking, meals, checks, medication, bedtime.</li>
+							<li>Have regular check-ins with your child: “How are you feeling about diabetes today?”</li>
+							<li>Take turns between caregivers to avoid burnout when possible.</li>
+							<li>Celebrate non-number wins: courage, honesty, trying again.</li>
+						</ul>
+					</div>
+				</div>
+			</section>
+
+			<!-- MEDICATION -->
+			<section id="medication">
+				<h2>Medication &amp; Treatment</h2>
+				<p class="section-intro">
+					Always follow your doctor’s advice. The notes below are for understanding and emotional comfort, not for replacing medical guidance.
+				</p>
+				<div class="grid-2">
+					<div class="card">
+						<div class="card-header">
+							<div class="card-icon">💉</div>
+							<h3>Insulin &amp; Devices</h3>
+						</div>
+						<ul>
+							<li>Children with Type 1 usually need daily insulin (pens or pumps).</li>
+							<li>Keep insulin stored safely and at the right temperature.</li>
+							<li>Rotate injection sites gently to avoid skin problems.</li>
+							<li>If you use sensors or pumps, involve your child in choosing stickers or covers.</li>
+						</ul>
+					</div>
+					<div class="card">
+						<div class="card-header">
+							<div class="card-icon">📋</div>
+							<h3>Medication Checklist</h3>
+						</div>
+						<ul>
+							<li>Double-check dose before giving insulin or tablets.</li>
+							<li>Note any side effects or unusual symptoms and inform your doctor.</li>
+							<li>Keep a small written list of medications and doses in your wallet or phone.</li>
+							<li>Never change doses on your own without professional guidance.</li>
+						</ul>
+					</div>
+				</div>
+			</section>
+
+			<!-- MORAL SUPPORT -->
+			<section id="support">
+				<h2>Moral Support: Healing the Heart</h2>
+				<p class="section-intro">
+					Numbers matter, but feelings matter too. Children need to know they are loved, capable,
+					and not defined by their condition.
+				</p>
+				<div class="card">
+					<div class="quote-card">
+						<p>
+							“On the tough days, remind your child:
+							You are brave. You are learning. You are never alone in this.”
+						</p>
+						<div class="quote-author">
+							— From one caregiver to another
+						</div>
+					</div>
+					<div class="support-list">
+						<div class="support-item">
+							<strong>Listen without fixing immediately.</strong><br>
+							Let children share their fears and frustrations fully before responding.
+						</div>
+						<div class="support-item">
+							<strong>Use gentle language.</strong><br>
+							Avoid words like “bad” sugars or “cheating.” Focus on learning and adjusting.
+						</div>
+						<div class="support-item">
+							<strong>Create small rituals.</strong><br>
+							A special hug after injections, a sticker after a check, a bedtime gratitude moment.
+						</div>
+						<div class="support-item">
+							<strong>Model calm.</strong><br>
+							Even when you are scared inside, a calm tone helps children feel safe.
+						</div>
+					</div>
+				</div>
+			</section>
+
+			<!-- COMMENTS SECTION -->
+			<section id="comments">
+				<h2>Comments &amp; Words of Encouragement</h2>
+				<p class="section-intro">
+					Leave a short, kind message for other parents, caregivers, or children visiting this page.
+					Sometimes one sentence of encouragement can make someone’s entire day.
+				</p>
+				<div class="grid-2">
+					<div class="card">
+						<h3>Leave a Comment</h3>
+						<form id="comment-form">
+							<div class="form-row-2">
+								<div>
+									<label for="comment-name">Name (or nickname)</label>
+									<input type="text" id="comment-name" name="name" placeholder="e.g., Hopeful Mom, Brave Kid" required>
+								</div>
+								<div>
+									<label for="comment-role">You are a</label>
+									<select id="comment-role" name="role">
+										<option value="parent">Parent / Guardian</option>
+										<option value="child">Child / Teen</option>
+										<option value="relative">Relative</option>
+										<option value="teacher">Teacher</option>
+										<option value="other">Supporter</option>
+									</select>
+								</div>
+							</div>
+							<div>
+								<label for="comment-message">Your message</label>
+								<textarea id="comment-message" name="message" placeholder="Share a kind thought, a thank you, or a line of hope..." required></textarea>
+							</div>
+							<button type="submit" class="btn-primary">Post comment</button>
+							<p class="helper-text">
+								Comments here are for encouragement only and do not replace medical advice.
+							</p>
+						</form>
+					</div>
+					<div class="card">
+						<h3>Recent Messages</h3>
+						<div class="comment-list" id="comment-list">
+							<div class="comment">
+								<div class="comment-header">
+									<span>Sunny Dad</span>
+									<span class="comment-role">Parent</span>
+								</div>
+								<div>
+									“Dear kids, your courage inspires us every single day.
+									Every test and every injection is a step toward a strong future.”
+								</div>
+							</div>
+							<div class="comment">
+								<div class="comment-header">
+									<span>Little Star</span>
+									<span class="comment-role">Child</span>
+								</div>
+								<div>
+									“I still play, run, and laugh. Diabetes is just something I manage, not who I am.”
+								</div>
+							</div>
+							<!-- New comments can be appended here with JavaScript if desired -->
+						</div>
+					</div>
+				</div>
+			</section>
+
+			<!-- SHARE EXPERIENCE SECTION -->
+			<section id="experience-form">
+				<h2>Share Your Experience</h2>
+				<p class="section-intro">
+					If you feel ready, you can share a part of your journey. Your story might help another
+					family feel less alone and more hopeful.
+				</p>
+				<div class="card">
+					<form id="experience-share-form">
+						<div class="form-row-2">
+							<div>
+								<label for="exp-name">Name (optional)</label>
+								<input type="text" id="exp-name" name="name" placeholder="You can stay anonymous">
+							</div>
+							<div>
+								<label for="exp-email">Email (optional)</label>
+								<input type="email" id="exp-email" name="email" placeholder="For follow-up, if you like">
+							</div>
+						</div>
+						<div class="form-row-2">
+							<div>
+								<label for="exp-relation">I am a</label>
+								<select id="exp-relation" name="relation">
+									<option value="parent">Parent / Guardian</option>
+									<option value="child">Child / Teen</option>
+									<option value="relative">Relative</option>
+									<option value="health-professional">Health professional</option>
+									<option value="other">Other</option>
+								</select>
+							</div>
+							<div>
+								<label for="exp-years">Years with diabetes (approx.)</label>
+								<input type="number" id="exp-years" name="years" min="0" step="0.5" placeholder="e.g., 1.5">
+							</div>
+						</div>
+						<div>
+							<label for="exp-title">A short title for your story</label>
+							<input type="text" id="exp-title" name="title" placeholder="e.g., 'Our first year', 'Learning to be brave'">
+						</div>
+						<div>
+							<label for="exp-story">Your experience</label>
+							<textarea id="exp-story" name="story" placeholder="Share your journey, challenges, small victories, or tips for others..." required></textarea>
+						</div>
+						<div>
+							<label for="exp-consent">
+								<input type="checkbox" id="exp-consent" name="consent" required>
+								I understand that my story may be read by others for encouragement and support.
+							</label>
+						</div>
+						<button type="submit" class="btn-primary">Send my experience</button>
+						<p class="helper-text">
+							For safety, please avoid sharing full names, addresses, or medical details like exact doses.
+							Always consult your doctor for personal medical decisions.
+						</p>
+					</form>
+				</div>
+			</section>
+		</main>
+
+		<footer>
+			<p>
+				This website is created to offer comfort, motivation, and gentle guidance
+				for children living with diabetes and the people who love them.
+				It does not replace professional medical advice. For any medical questions,
+				please contact your doctor or healthcare team.
+			</p>
+			<p style="margin-top: 0.6rem;">
+				With care, courage, and kindness — every single day. 🌟
+			</p>
+			<p style="margin-top: 0.6rem;">&copy; <span id="year"></span> diabeticchowdary</p>
+		</footer>
+	</div>
+
+	<!-- JS -->
+	<script>
+		// Splash logic: show title for 4 seconds, then show main site
+		window.addEventListener("load", function () {
+			setTimeout(function () {
+				document.getElementById("splash-screen").style.display = "none";
+				document.getElementById("main-wrapper").style.display = "block";
+			}, 4000); // 4000 ms = 4 seconds
+		});
+
+		// Simple form alerts
+		document.getElementById("comment-form").addEventListener("submit", function (e) {
+			e.preventDefault();
+			alert("Thank you for your kind message! In a real site, it would now be saved and shown to others.");
+			this.reset();
+		});
+
+		document.getElementById("experience-share-form").addEventListener("submit", function (e) {
+			e.preventDefault();
+			alert("Thank you for sharing your experience. Your story can bring hope to another family.");
+			this.reset();
+		});
+
+		// Dynamic year in footer
+		document.getElementById("year").textContent = new Date().getFullYear();
+	</script>
+</body>
+</html>
