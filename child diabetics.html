@@ -3,11 +3,35 @@
 <head>
 	<meta charset="UTF-8">
 	<title>Child Diabetes Care & Support</title>
-	<link rel="icon" href="https://akhilasaichowdary-darapaneni.github.io/childdiabetics/
-	Child%20Diabetics%20Logo.png" 
-	type="image/x-icon">
+	
+	<link rel="icon" 
+      href="https://akhilasaichowdary-darapaneni.github.io/childdiabetics/Child%20Diabetics%20Logo.png"
+      type="image/png">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<style>
+		.splash-logo {
+        width: 140px;              /* medium size */
+        height: 140px;
+        object-fit: cover;
+        border-radius: 50%;        /* makes it circular */
+        background: white;
+        padding: 6px;
+        margin-bottom: 1rem;
+        box-shadow: 0 8px 18px rgba(0, 0, 0, 0.25);
+        animation: logoFade 1.2s ease-in-out;
+        }
+
+        @keyframes logoFade {
+        from {
+            opacity: 0;
+            transform: scale(0.85);
+        }
+        to {
+           opacity: 1;
+           transform: scale(1);
+        }
+        }
+
 		:root {
 			--primary: #ff8a80;
 			--primary-dark: #e57373;
@@ -419,6 +443,11 @@
 
 	<!-- SPLASH SCREEN (shown for 4 seconds) -->
 	<div id="splash-screen">
+		<img 
+        src="https://akhilasaichowdary-darapaneni.github.io/childdiabetics/Child%20Diabetics%20Logo.png"
+        alt="Child Diabetics Logo"
+        class="splash-logo"
+        />
 		<div id="splash-title">Child Diabetes Care &amp; Support</div>
 		<div id="splash-subtitle">With care, courage, and kindness — every single day.</div>
 		<div id="splash-dots">...</div>
@@ -843,5 +872,3 @@
 	</script>
 </body>
 </html>
-
-
