@@ -448,6 +448,46 @@
             width: auto;
         }
 
+		/* Hamburger button */
+        .menu-toggle {
+            display: none;
+            background: none;
+            border: none;
+            font-size: 1.8rem;
+            color: white;
+            cursor: pointer;
+        }
+
+        /* Mobile styles */
+        @media (max-width: 768px) {
+        .menu-toggle {
+             display: block;
+        }
+
+        nav {
+            display: none;
+            flex-direction: column;
+            background: #ff8a80;
+            position: absolute;
+            top: 70px;
+            right: 1rem;
+            width: 200px;
+           border-radius: 12px;
+                        box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+            padding: 0.5rem 0;
+        }
+
+        nav a {
+            padding: 0.7rem 1rem;
+            margin: 0;
+        }
+
+        nav.show {
+            display: flex;
+        }
+        }
+
+
 	</style>
 </head>
 <body>
@@ -471,7 +511,10 @@
 				<div class="logo">
 					<span>🧸</span> Child Diabetes Care
 				</div>
-				<nav>
+
+				<button class="menu-toggle" id="menuToggle">☰</button>
+
+				<nav id="mainNav">
 					<a href="https://akhilasaichowdary-darapaneni.github.io/home/home.html"target="_blank">Home</a>
 					<a href="https://akhilasaichowdary-darapaneni.github.io/causes/causes.html"target="_blank">Causes</a>
 					<a href="https://akhilasaichowdary-darapaneni.github.io/precautions/precautions.html"target="_blank">Precautions</a>
@@ -882,5 +925,10 @@
 		// Dynamic year in footer
 		document.getElementById("year").textContent = new Date().getFullYear();
 	</script>
+	<script>
+    document.getElementById("menuToggle").addEventListener("click", function () {
+        document.getElementById("mainNav").classList.toggle("show");
+    });
+    </script>
 </body>
 </html>
